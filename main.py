@@ -9,50 +9,58 @@ def load_data():
         with open(data_file, "r") as file:
             print(f"Data loaded from {data_file}")
             return json.load(file)
-    return{}
+    return {"books": []}  # Return a dictionary with an empty books list
 
 def save_data(data):
     with open(data_file, "w") as file:
         json.dump(data, file)
 
 def add_book(data):
-    title = input("Enter the title of the book: ")
-    author = input("Enter the author of the book: ")
-    year = input("Enter the year of the book: ")
-
-    addbook = {
-        "title": title,
-        "author": author,
-        "year": year
-    }    
-    data.append(addbook)
-    save_data(data)
-    print(f"Book '{title}' by {author} added successfully.")
+    try:
+        title = input("Enter the title of the book: ").strip()
+        author = input("Enter the author of the book: ").strip()
+        year = input("Enter the year of the book: ").strip()
+        
+        # Validate year input
+        if not year.isdigit():
+            print("Error: Year must be a number!")
+            return
+            
+        addbook = {
+            "title": title,
+            "author": author,
+            "year": int(year)  # Convert year to integer
+        }    
+        data["books"].append(addbook)  # Append to the books list
+        save_data(data)
+        print(f"Book '{title}' by {author} added successfully.")
+    except Exception as e:
+        print(f"Error adding book: {e}")
 
 def remove_book(data):
     title = input("Enter the title of the book to remove: ")
-    for book in data:
+    for book in data["books"]:  # Access the books list
         if book["title"] == title:
-            data.remove(book)
+            data["books"].remove(book)  # Remove from the books list
             save_data(data)
             print(f"Book '{title}' removed successfully.")
-        else:
-            print(f"Book '{title}' not found.")
+            return
+    print(f"Book '{title}' not found.")
 
 def search_book(data):
     title = input("Enter the title of the book to search for: ")
-    for book in data:
+    for book in data["books"]:  # Access the books list
         if book["title"] == title:
             print(f"Book found: {book}")
-        else:
-            print(f"Book '{title}' not found.")
+            return
+    print(f"Book '{title}' not found.")
 
 def display_books(data):
-    if not data:
+    if not data["books"]:  # Check the books list
         print("No books available.")
     else:
         print("Books in the library:")
-        for book in data:
+        for book in data["books"]:  # Access the books list
             print(f"Title: {book['title']}, Author: {book['author']}, Year: {book['year']}")
 
 def main():
